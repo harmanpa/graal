@@ -40,11 +40,21 @@ ifneq (${OS},windows)
 
 default: bin/${LIBTRUFFLENFI}
 
-OBJECTFILES=${OBJECTS:%.o=bin/%.o}
 CPPFLAGS+=-I${VPATH}/include "-I${JAVA_HOME}/include" "-I${JAVA_HOME}/include/${OS}" -Ilibffi-build/include -DOS_${OS}
-CFLAGS=-g -fPIC
 LDFLAGS=-g -ldl
 LIBFFI_LIB=libffi-build/.libs/libffi.a
+
+ifeq (${OS},windows)
+CFLAGS=-g
+TAR=bsdtar
+CPPFLAGS+=-Idlfcn-win32-1.1.1 "-I${JAVA_HOME}/include/win32"
+OBJECTS+=dlfcn.o
+else
+CFLAGS=-g -fPIC
+TAR=tar
+endif
+
+OBJECTFILES=${OBJECTS:%.o=bin/%.o}
 
 ifeq (${OS},solaris)
 CFLAGS+=-m64 -pthread
@@ -59,7 +69,7 @@ bin/${LIBTRUFFLENFI}: ${OBJECTFILES} ${LIBFFI_LIB}
 	$(QUIETLY) gcc -shared ${LDFLAGS} $+ -o $@
 
 bin/%.o: src/%.c bin/%.d libffi-build/include/ffi.h
-	@echo CC $@
+	@echo CC $@ $<
 	$(QUIETLY) gcc -c -Wall -Werror ${CFLAGS} ${CPPFLAGS} ${DEPFLAGS} -o $@ $<
 	$(QUIETLY) mv -f bin/$*.Td bin/$*.d && touch $@
 
@@ -77,8 +87,13 @@ libffi-build/Makefile: libffi-3.2.1/configure
 libffi-build/include/ffi.h: libffi-build/Makefile
 
 libffi-3.2.1/configure: ${LIBFFI_SRC}
-	$(QUIETLY) tar xzf ${LIBFFI_SRC}
+	$(QUIETLY) $(TAR) xzf ${LIBFFI_SRC}
+	$(QUIETLY) $(TAR) xzf ${DLFCNWIN32_SRC}
 	$(QUIETLY) touch $@
+
+src/dlfcn.c: libffi-3.2.1/configure
+	$(shell mkdir -p src/ >/dev/null)
+	$(QUIETLY) cp -f dlfcn-win32-1.1.1/dlfcn.c src/dlfcn.c
 
 bin/%.d: ;
 .PRECIOUS: bin/%.d

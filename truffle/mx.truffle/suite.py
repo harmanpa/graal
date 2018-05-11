@@ -53,6 +53,13 @@ suite = {
       ],
       "sha1" : "280c265b789e041c02e5c97815793dfc283fb1e6",
     },
+
+    "DLFCNWIN32" : {
+      "urls" : [
+        "https://github.com/dlfcn-win32/dlfcn-win32/archive/v1.1.1.tar.gz"
+      ],
+      "sha1" : "d6f38b01ea7c609c31403d1e0fc8aa5478b62b68"
+    },
   },
   "snippetsPattern" : ".*(Snippets|doc-files).*",
   "projects" : {
@@ -628,6 +635,7 @@ suite = {
       "buildEnv" : {
         "CPPFLAGS" : "-I<jnigen:com.oracle.truffle.nfi>",
         "LIBFFI_SRC" : "<path:LIBFFI>",
+        "DLFCNWIN32_SRC" : "<path:DLFCNWIN32>",
         "LIBTRUFFLENFI" : "<lib:trufflenfi>",
         "OS" : "<os>",
       },

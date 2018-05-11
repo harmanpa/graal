@@ -35,6 +35,8 @@
 #define ERRNO_LOCATION __error
 #elif defined(OS_solaris)
 #define ERRNO_LOCATION ___errno
+#elif defined(OS_windows)
+#define ERRNO_LOCATION _errno
 #endif
 
 #define STRINGIFY_IMPL(x) #x
