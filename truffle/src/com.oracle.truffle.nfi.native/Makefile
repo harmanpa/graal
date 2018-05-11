@@ -49,9 +49,11 @@ CFLAGS=-g
 TAR=bsdtar
 CPPFLAGS+=-Idlfcn-win32-1.1.1 "-I${JAVA_HOME}/include/win32"
 OBJECTS+=dlfcn.o
+CONFIGUREFLAGS=--build=x86_64-w64-mingw32 --host=x86_64-w64-mingw32
 else
 CFLAGS=-g -fPIC
 TAR=tar
+CONFIGUREFLAGS=
 endif
 
 OBJECTFILES=${OBJECTS:%.o=bin/%.o}
@@ -82,7 +84,7 @@ ${LIBFFI_LIB}: libffi-build/Makefile
 libffi-build/Makefile: libffi-3.2.1/configure
 	$(QUIETLY) echo CONFIGURE libffi
 	$(QUIETLY) mkdir -p libffi-build
-	$(QUIETLY) unset CDPATH CPPFLAGS && cd libffi-build && CFLAGS="${CFLAGS}" ../libffi-3.2.1/configure --enable-static > ../libffi.configure.log
+	$(QUIETLY) unset CDPATH CPPFLAGS && cd libffi-build && CFLAGS="${CFLAGS}" ../libffi-3.2.1/configure --enable-static ${CONFIGUREFLAGS} > ../libffi.configure.log
 
 libffi-build/include/ffi.h: libffi-build/Makefile
 
